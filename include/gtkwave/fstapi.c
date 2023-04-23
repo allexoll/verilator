@@ -2142,7 +2142,7 @@ if(xc && !xc->already_in_close && !xc->already_in_flush)
                 fflush(xc->handle);
 
 #ifndef __MINGW32__
-                sprintf(fnam, "%s.hier", xc->filename);
+                snprintf(fnam, strlen(xc->filename) + 5 + 1,"%s.hier", xc->filename);
                 unlink(fnam);
                 free(fnam);
 #endif
@@ -2821,7 +2821,7 @@ if(ctx && name && literal_arr && val_arr && (elem_count != 0))
 	uint32_t i;
 
 	name_len = strlen(name);
-	elem_count_len = sprintf(elem_count_buf, "%" PRIu32, elem_count);
+	elem_count_len = snprintf(elem_count_buf, 16, "%" PRIu32, elem_count);
 
 	literal_lens = (unsigned int *)calloc(elem_count, sizeof(unsigned int));
 	val_lens = (unsigned int *)calloc(elem_count, sizeof(unsigned int));
@@ -3928,7 +3928,7 @@ if(!xc->fh)
                 htyp = xc->contains_hier_section_lz4duo ? FST_BL_HIER_LZ4DUO : FST_BL_HIER_LZ4;
                 }
 
-        sprintf(fnam, "%s.hier_%d_%p", xc->filename, getpid(), (void *)xc);
+        snprintf(fnam,strlen(xc->filename) + 6 + 16 + 32 + 1, "%s.hier_%d_%p", xc->filename, getpid(), (void *)xc);
         fstReaderFseeko(xc, xc->f, xc->hier_pos, SEEK_SET);
         uclen = fstReaderUint64(xc->f);
 #ifndef __MINGW32__
@@ -4593,7 +4593,7 @@ if(sectype == FST_BL_ZWRAPPER)
 
         hf = (char *)calloc(1, flen + 16 + 32 + 1);
 
-        sprintf(hf, "%s.upk_%d_%p", xc->filename, getpid(), (void *)xc);
+        snprintf(hf,flen + 16 + 32 + 1, "%s.upk_%d_%p", xc->filename, getpid(), (void *)xc);
         fcomp = fopen(hf, "w+b");
         if(!fcomp)
                 {
@@ -5189,16 +5189,16 @@ for(;;)
 
                                 if(beg_tim)
                                         {
-					if(dumpvars_state == 1) { wx_len = sprintf(wx_buf, "$end\n"); fstWritex(xc, wx_buf, wx_len); dumpvars_state = 2; }
-                                        wx_len = sprintf(wx_buf, "#%" PRIu64 "\n", beg_tim);
+					if(dumpvars_state == 1) { wx_len = snprintf(wx_buf, 32, "$end\n"); fstWritex(xc, wx_buf, wx_len); dumpvars_state = 2; }
+                                        wx_len = snprintf(wx_buf, 32, "#%" PRIu64 "\n", beg_tim);
                                         fstWritex(xc, wx_buf, wx_len);
-					if(!dumpvars_state) { wx_len = sprintf(wx_buf, "$dumpvars\n"); fstWritex(xc, wx_buf, wx_len); dumpvars_state = 1; }
+					if(!dumpvars_state) { wx_len = snprintf(wx_buf, 32, "$dumpvars\n"); fstWritex(xc, wx_buf, wx_len); dumpvars_state = 1; }
                                         }
                                 if((xc->num_blackouts)&&(cur_blackout != xc->num_blackouts))
                                         {
                                         if(beg_tim == xc->blackout_times[cur_blackout])
                                                 {
-                                                wx_len = sprintf(wx_buf, "$dump%s $end\n", (xc->blackout_activity[cur_blackout++]) ? "on" : "off");
+                                                wx_len = snprintf(wx_buf, 32, "$dump%s $end\n", (xc->blackout_activity[cur_blackout++]) ? "on" : "off");
                                                 fstWritex(xc, wx_buf, wx_len);
                                                 }
                                         }
@@ -5332,7 +5332,7 @@ for(;;)
                                                                                         clone_d[j] = srcdata[7-j];
                                                                                         }
                                                                                 }
-                                                                        sprintf((char *)xc->temp_signal_value_buf, "%.16g", d);
+                                                                        snprintf((char *)xc->temp_signal_value_buf, xc->longest_signal_value_len + 1, "%.16g", d);
                                                                         value_change_callback(user_callback_data_pointer, beg_tim, idx+1, xc->temp_signal_value_buf);
                                                                         }
                                                                 }
@@ -5360,7 +5360,7 @@ for(;;)
                                                                                 }
 
                                                                         fstVcdID(vcdid_buf, idx+1);
-                                                                        wx_len = sprintf(wx_buf, "r%.16g %s\n", d, vcdid_buf);
+                                                                        wx_len = snprintf(wx_buf, 64, "r%.16g %s\n", d, vcdid_buf);
                                                                         fstWritex(xc, wx_buf, wx_len);
                                                                         }
                                                                 }
@@ -5625,16 +5625,16 @@ for(;;)
                                                 }
                                         }
 
-				if(dumpvars_state == 1) { wx_len = sprintf(wx_buf, "$end\n"); fstWritex(xc, wx_buf, wx_len); dumpvars_state = 2; }
-                                wx_len = sprintf(wx_buf, "#%" PRIu64 "\n", time_table[i]);
+				if(dumpvars_state == 1) { wx_len = snprintf(wx_buf, 32, "$end\n"); fstWritex(xc, wx_buf, wx_len); dumpvars_state = 2; }
+                                wx_len = snprintf(wx_buf, 32, "#%" PRIu64 "\n", time_table[i]);
                                 fstWritex(xc, wx_buf, wx_len);
-				if(!dumpvars_state) { wx_len = sprintf(wx_buf, "$dumpvars\n"); fstWritex(xc, wx_buf, wx_len); dumpvars_state = 1; }
+				if(!dumpvars_state) { wx_len = snprintf(wx_buf, 32, "$dumpvars\n"); fstWritex(xc, wx_buf, wx_len); dumpvars_state = 1; }
 
                                 if((xc->num_blackouts)&&(cur_blackout != xc->num_blackouts))
                                         {
                                         if(time_table[i] == xc->blackout_times[cur_blackout])
                                                 {
-                                                wx_len = sprintf(wx_buf, "$dump%s $end\n", (xc->blackout_activity[cur_blackout++]) ? "on" : "off");
+                                                wx_len = snprintf(wx_buf, 32, "$dump%s $end\n", (xc->blackout_activity[cur_blackout++]) ? "on" : "off");
                                                 fstWritex(xc, wx_buf, wx_len);
                                                 }
                                         }
@@ -5884,7 +5884,7 @@ for(;;)
                                                                         clone_d[j] = srcdata[7-j];
                                                                         }
                                                                 }
-                                                        sprintf((char *)xc->temp_signal_value_buf, "%.16g", d);
+                                                        snprintf((char *)xc->temp_signal_value_buf, xc->longest_signal_value_len + 1, "%.16g", d);
                                                         value_change_callback(user_callback_data_pointer, time_table[i], idx+1, xc->temp_signal_value_buf);
                                                         }
                                                 }
@@ -5910,7 +5910,7 @@ for(;;)
                                                                         }
                                                                 }
 
-                                                        wx_len = sprintf(wx_buf, "r%.16g", d);
+                                                        wx_len = snprintf(wx_buf, 32, "r%.16g", d);
                                                         fstWritex(xc, wx_buf, wx_len);
                                                         }
                                                 }
@@ -5977,7 +5977,7 @@ return(1);
 
 /* rvat functions */
 
-static char *fstExtractRvatDataFromFrame(struct fstReaderContext *xc, fstHandle facidx, char *buf)
+static char *fstExtractRvatDataFromFrame(struct fstReaderContext *xc, fstHandle facidx, char *buf, size_t buf_len)
 {
 if(facidx >= xc->rvat_frame_maxhandle)
         {
@@ -6016,7 +6016,7 @@ if(xc->signal_lens[facidx] == 1)
                                 }
                         }
 
-                sprintf((char *)buf, "%.16g", d);
+                snprintf((char *)buf, buf_len, "%.16g", d);
                 }
         }
 
@@ -6024,7 +6024,7 @@ return(buf);
 }
 
 
-char *fstReaderGetValueFromHandleAtTime(void *ctx, uint64_t tim, fstHandle facidx, char *buf)
+char *fstReaderGetValueFromHandleAtTime(void *ctx, uint64_t tim, fstHandle facidx, char *buf, size_t buf_len)
 {
 struct fstReaderContext *xc = (struct fstReaderContext *)ctx;
 fst_off_t blkpos = 0, prev_blkpos;
@@ -6369,7 +6369,7 @@ facidx--; /* scale down for array which starts at zero */
 
 if(((tim == xc->rvat_beg_tim)&&(!xc->rvat_chain_table[facidx])) || (!xc->rvat_chain_table[facidx]))
         {
-        return(fstExtractRvatDataFromFrame(xc, facidx, buf));
+        return(fstExtractRvatDataFromFrame(xc, facidx, buf, buf_len));
         }
 
 if(facidx != xc->rvat_chain_facidx)
@@ -6496,7 +6496,7 @@ if(xc->signal_lens[facidx] == 1)
                 }
                 else
                 {
-                return(fstExtractRvatDataFromFrame(xc, facidx, buf));
+                return(fstExtractRvatDataFromFrame(xc, facidx, buf, buf_len));
                 }
         }
         else
@@ -6608,13 +6608,13 @@ if(xc->signal_lens[facidx] == 1)
                                         }
                                 }
 
-                        sprintf(buf, "r%.16g", d);
+                        snprintf(buf, buf_len, "r%.16g", d);
                         return(buf);
                         }
                 }
                 else
                 {
-                return(fstExtractRvatDataFromFrame(xc, facidx, buf));
+                return(fstExtractRvatDataFromFrame(xc, facidx, buf, buf_len));
                 }
         }
 }

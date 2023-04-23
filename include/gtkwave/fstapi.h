@@ -423,7 +423,7 @@ uint64_t        fstReaderGetStartTime(void *ctx);
 signed char     fstReaderGetTimescale(void *ctx);
 int64_t         fstReaderGetTimezero(void *ctx);
 uint64_t        fstReaderGetValueChangeSectionCount(void *ctx);
-char *          fstReaderGetValueFromHandleAtTime(void *ctx, uint64_t tim, fstHandle facidx, char *buf);
+char *          fstReaderGetValueFromHandleAtTime(void *ctx, uint64_t tim, fstHandle facidx, char *buf, size_t buf_len);
 uint64_t        fstReaderGetVarCount(void *ctx);
 const char *    fstReaderGetVersionString(void *ctx);
 struct fstHier *fstReaderIterateHier(void *ctx);
